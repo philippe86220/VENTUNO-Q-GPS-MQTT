@@ -234,7 +234,7 @@ client.write((uint8_t)remainingLength);
 
 MQTT's Remaining Length uses a **variable-length encoding**, potentially 1–4 bytes. For values from 0 to 127, it occupies exactly one byte, so `0x1E` is correct for our example. This minimal function rejects values greater than 127 instead of implementing the general encoding.
 
-### 5.4 Two-byte topic length: `00 14`
+### 7.4 Two-byte topic length: `00 14`
 
 ```cpp
 client.write((uint8_t)(topicLength >> 8));
@@ -277,7 +277,7 @@ ASCII payload: 46.91598
 
 The broker parses the PUBLISH packet and routes its payload to clients subscribed to matching topics. The broker does not need to know that the number represents latitude; that meaning is established by the application and topic name.
 
-## 6. When does the sketch reconnect or publish?
+## 8. When does the sketch reconnect or publish?
 
 The relevant control flow is:
 
@@ -317,7 +317,7 @@ The intended behavior is:
 
 **Subtlety:** `client.connected()` reports the TCP connection state; it does not by itself prove that the MQTT session is still accepted. The simple sketch does not implement a complete MQTT session state machine.
 
-## 8. Converting GPS values into MQTT payloads
+## 9. Converting GPS values into MQTT payloads
 
 After parsing a valid NMEA sentence, the sketch formats values as text:
 
@@ -344,7 +344,7 @@ mqttPublish("ventuno/gps/satellites", buffer);
 
 Each `mqttPublish()` call creates a **separate** MQTT PUBLISH packet. The four fields are not delivered atomically; a subscriber could briefly display values from different updates.
 
-## 9. Why the example needs no MQTT library
+## 10. Why the example needs no MQTT library
 
 The application builds the protocol packets directly using `client.write()`. This makes the wire format transparent and is excellent for learning. However, a mature MQTT client library normally handles:
 
@@ -357,7 +357,7 @@ The application builds the protocol packets directly using `client.write()`. Thi
 
 This proof of concept implements only the subset needed to send short, periodic **QoS 0** GPS messages.
 
-## 10. Practical limitations and improvements
+## 11. Practical limitations and improvements
 
 | Area | Current implementation | Recommended improvement for long-term use |
 |---|---|---|
@@ -380,7 +380,7 @@ This proof of concept implements only the subset needed to send short, periodic 
 
 MQTT Client IDs must identify client connections uniquely on the broker. If another client connects with the same Client ID, the broker may disconnect the existing connection. The hard-coded `VQGPS01` is a learning example, not a robust globally unique identifier.
 
-## 11. Testing the pipeline
+## 12. Testing the pipeline
 
 ### Test a subscriber without the GPS sketch
 
@@ -408,7 +408,7 @@ This verifies broker access and topic routing independently of the GPS parser an
 - Widgets: text outputs subscribed to the four topics listed in section 1
 - If the app automatically prefixes topics with a dashboard prefix, disable that behavior or configure the final topic strings accordingly.
 
-## 12. Project files and responsibilities
+## 13. Project files and responsibilities
 
 A typical Arduino App Lab project separates these concerns:
 
@@ -434,11 +434,17 @@ The C++ sketch depends on the Arduino RouterBridge facilities and on the project
 
 **Key takeaway:** **TCP carries bytes; MQTT defines what those bytes mean.** The MCU establishes TCP, sends CONNECT, validates CONNACK, and then sends PUBLISH packets containing GPS topic/payload pairs. The bridge supplies the network transport; the MQTT logic itself is implemented in C++.
 
-## 13. References
+## 14. References
 
 - OASIS, *MQTT Version 3.1.1* — normative specification: https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html
 - EMQX public MQTT broker information: https://www.emqx.com/en/mqtt/public-mqtt5-broker
 - Arduino documentation portal: https://docs.arduino.cc/
+
+## Acknowledgements
+
+This project was developed by Philippe Costes with the assistance of OpenAI's ChatGPT (GPT-6), particularly for the MQTT protocol implementation, code analysis, debugging, and technical documentation.
+
+The implementation was tested and validated on an Arduino VENTUNO Q.
 
 ---
 
