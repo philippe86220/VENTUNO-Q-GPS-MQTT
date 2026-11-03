@@ -28,8 +28,8 @@ GPS receiver --NMEA/UART--> VENTUNO Q MCU (C++)
 
 | Topic | Example payload | Meaning |
 |---|---|---|
-| `ventuno/gps/latitude` | `46.915980` | Decimal latitude |
-| `ventuno/gps/longitude` | `0.592050` | Decimal longitude |
+| `ventuno/gps/latitude` | `47.915980` | Decimal latitude |
+| `ventuno/gps/longitude` | `0.792050` | Decimal longitude |
 | `ventuno/gps/altitude` | `52.7` | Altitude reported by the GPS parser |
 | `ventuno/gps/satellites` | `8` | Satellite count reported by the parser |
 
