@@ -35,7 +35,36 @@ GPS receiver --NMEA/UART--> VENTUNO Q MCU (C++)
 
 The phone subscribes to these exact topics. The example uses four separate MQTT publications, **not** a single JSON payload.
 
-## 2. TCP is not MQTT
+## 2. Original Project
+
+This project is based on my earlier Arduino UNO Q GPS application:
+
+**[UNO-Q-GPS](https://github.com/philippe86220/UNO-Q-GPS)**
+
+The original application was developed using Arduino App Lab and combines:
+
+- **STM32 microcontroller (MCU):** Receives GPS data through the UART interface and processes NMEA sentences.
+- **Arduino Bridge:** Transfers the decoded GPS information from the MCU to the Linux environment.
+- **Python:** Receives and manages the GPS data.
+- **HTML WebUI Brick:** Displays the GPS information through a web interface.
+
+### From WebUI to MQTT
+
+The new project explores a different communication approach.
+
+Instead of transferring GPS data to Python for display through a WebUI, the MCU publishes the decoded information directly to a remote MQTT broker using `BridgeTCPClient`.
+
+The MQTT packets are constructed manually in C++, without relying on an external MQTT client library.
+
+The implementation demonstrates how the MQTT 3.1.1 protocol works at the packet level, including CONNECT, CONNACK, and PUBLISH.
+
+The Linux MPU still provides network connectivity through Arduino Bridge, but no Python-based GPS processing or HTML WebUI is required.
+
+GPS data can then be received by any MQTT client subscribed to the corresponding topics, including the IoT MQTT Panel application on a smartphone.
+
+For the original GPS implementation, NMEA parsing logic, and WebUI-based application, please refer to the **UNO-Q-GPS repository** linked above.
+
+## 3. TCP is not MQTT
 
 Two distinct operations are required:
 
