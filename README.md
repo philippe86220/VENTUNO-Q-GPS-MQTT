@@ -408,7 +408,7 @@ This verifies broker access and topic routing independently of the GPS parser an
 - Widgets: text outputs subscribed to the four topics listed in section 1
 - If the app automatically prefixes topics with a dashboard prefix, disable that behavior or configure the final topic strings accordingly.
 
-## 13. Project files and responsibilities
+## 12. Project files and responsibilities
 
 A typical Arduino App Lab project separates these concerns:
 
@@ -421,7 +421,7 @@ project/
 
 The C++ sketch depends on the Arduino RouterBridge facilities and on the project's custom `Trame` parser. This guide documents the protocol but is **not** a self-contained buildable project without those dependencies. A minimal Python entry point may still be present for App Lab's application lifecycle; no Python GPS-processing or MQTT-publishing function is required by this design. Python stdout and MCU serial output are separate logging streams.
 
-## 12. Quick protocol reference
+## 13. Quick protocol reference
 
 | Packet | Direction | Purpose | Example bytes |
 |---|---|---|---|
@@ -434,7 +434,7 @@ The C++ sketch depends on the Arduino RouterBridge facilities and on the project
 
 **Key takeaway:** **TCP carries bytes; MQTT defines what those bytes mean.** The MCU establishes TCP, sends CONNECT, validates CONNACK, and then sends PUBLISH packets containing GPS topic/payload pairs. The bridge supplies the network transport; the MQTT logic itself is implemented in C++.
 
-## 13. References
+## 14. References
 
 - OASIS, *MQTT Version 3.1.1* — normative specification: https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html
 - EMQX public MQTT broker information: https://www.emqx.com/en/mqtt/public-mqtt5-broker
