@@ -189,7 +189,7 @@ void mqttPublish(const char* topic, const char* message) {
 }
 ```
 
-### 7.1 Topic and payload lengths
+### 6.1 Topic and payload lengths
 
 `strlen()` counts bytes in the ASCII example strings, **excluding** the terminating `\0` byte. MQTT sends the topic name and payload without C string terminators.
 
@@ -206,7 +206,7 @@ mqttPublish("ventuno/gps/latitude", "46.91598");
 
 The Remaining Length counts all bytes **after** the fixed header. It includes the two-byte topic length, the topic itself, and the payload. With QoS 0, there is no Packet Identifier field.
 
-### 7.2 First fixed-header byte: `0x30`
+### 6.2 First fixed-header byte: `0x30`
 
 ```cpp
 client.write((uint8_t)0x30);
@@ -226,7 +226,7 @@ client.write((uint8_t)0x30);
 
 **RETAIN = 0** means the broker is not asked to save this publication as the last retained message for future subscribers. A phone that subscribes later normally waits for the next update.
 
-### 7.3 Remaining Length: `0x1E`
+### 6.3 Remaining Length: `0x1E`
 
 ```cpp
 client.write((uint8_t)remainingLength);
@@ -234,7 +234,7 @@ client.write((uint8_t)remainingLength);
 
 MQTT's Remaining Length uses a **variable-length encoding**, potentially 1–4 bytes. For values from 0 to 127, it occupies exactly one byte, so `0x1E` is correct for our example. This minimal function rejects values greater than 127 instead of implementing the general encoding.
 
-### 7.4 Two-byte topic length: `00 14`
+### 6.4 Two-byte topic length: `00 14`
 
 ```cpp
 client.write((uint8_t)(topicLength >> 8));
@@ -248,7 +248,7 @@ Twenty decimal = `0x0014`. MQTT's two-byte integer is encoded **most-significant
 
 The broker reads `00 14` and knows the next **20 bytes** are the topic name. This two-byte length is not the same thing as the Remaining Length field.
 
-### 7.5 Topic and payload bytes
+### 6.5 Topic and payload bytes
 
 ```cpp
 client.write((const uint8_t*)topic, topicLength);
@@ -259,7 +259,7 @@ These calls send the raw bytes of the topic followed by the raw bytes of the pay
 
 MQTT topic names are UTF-8 strings. In this project, the topic names and numeric payloads use simple ASCII characters, which are also valid UTF-8.
 
-### 7.6 Complete PUBLISH packet
+### 6.6 Complete PUBLISH packet
 
 ```text
 Hex prefix: 30 1E 00 14
@@ -277,7 +277,7 @@ ASCII payload: 46.91598
 
 The broker parses the PUBLISH packet and routes its payload to clients subscribed to matching topics. The broker does not need to know that the number represents latitude; that meaning is established by the application and topic name.
 
-## 8. When does the sketch reconnect or publish?
+## 7. When does the sketch reconnect or publish?
 
 The relevant control flow is:
 
@@ -317,7 +317,7 @@ The intended behavior is:
 
 **Subtlety:** `client.connected()` reports the TCP connection state; it does not by itself prove that the MQTT session is still accepted. The simple sketch does not implement a complete MQTT session state machine.
 
-## 9. Converting GPS values into MQTT payloads
+## 8. Converting GPS values into MQTT payloads
 
 After parsing a valid NMEA sentence, the sketch formats values as text:
 
@@ -344,7 +344,7 @@ mqttPublish("ventuno/gps/satellites", buffer);
 
 Each `mqttPublish()` call creates a **separate** MQTT PUBLISH packet. The four fields are not delivered atomically; a subscriber could briefly display values from different updates.
 
-## 10. Why the example needs no MQTT library
+## 9. Why the example needs no MQTT library
 
 The application builds the protocol packets directly using `client.write()`. This makes the wire format transparent and is excellent for learning. However, a mature MQTT client library normally handles:
 
@@ -357,7 +357,7 @@ The application builds the protocol packets directly using `client.write()`. Thi
 
 This proof of concept implements only the subset needed to send short, periodic **QoS 0** GPS messages.
 
-## 11. Practical limitations and improvements
+## 10. Practical limitations and improvements
 
 | Area | Current implementation | Recommended improvement for long-term use |
 |---|---|---|
@@ -380,7 +380,7 @@ This proof of concept implements only the subset needed to send short, periodic 
 
 MQTT Client IDs must identify client connections uniquely on the broker. If another client connects with the same Client ID, the broker may disconnect the existing connection. The hard-coded `VQGPS01` is a learning example, not a robust globally unique identifier.
 
-## 12. Testing the pipeline
+## 11. Testing the pipeline
 
 ### Test a subscriber without the GPS sketch
 
@@ -434,7 +434,7 @@ The C++ sketch depends on the Arduino RouterBridge facilities and on the project
 
 **Key takeaway:** **TCP carries bytes; MQTT defines what those bytes mean.** The MCU establishes TCP, sends CONNECT, validates CONNACK, and then sends PUBLISH packets containing GPS topic/payload pairs. The bridge supplies the network transport; the MQTT logic itself is implemented in C++.
 
-## 14. References
+## 13. References
 
 - OASIS, *MQTT Version 3.1.1* — normative specification: https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html
 - EMQX public MQTT broker information: https://www.emqx.com/en/mqtt/public-mqtt5-broker
