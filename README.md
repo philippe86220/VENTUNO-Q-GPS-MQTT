@@ -35,6 +35,9 @@ GPS receiver --NMEA/UART--> VENTUNO Q MCU (C++)
 
 The phone subscribes to these exact topics. The example uses four separate MQTT publications, **not** a single JSON payload.
 
+![Iot MQTT Panel – VENTUNO Q GPS MQTT](image/MQTT-GPS.png)
+
+
 ## 2. Original Project
 
 This project is based on my earlier Arduino UNO Q GPS application:
